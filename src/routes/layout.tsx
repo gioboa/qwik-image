@@ -1,30 +1,33 @@
-import { component$, Slot } from '@builder.io/qwik';
-import { loader$ } from '@builder.io/qwik-city';
+import { $, component$, Slot } from '@builder.io/qwik';
+import { useImageProvider } from '~/components/image/image';
+import type { ImageTransformerProps } from '~/components/image/image';
+import { providers, selectedProvider } from '~/providers';
 
 import Header from '../components/header/header';
 
-export const useServerTimeLoader = loader$(() => {
-  return {
-    date: new Date().toISOString(),
-  };
-});
-
 export default component$(() => {
-  const serverTime = useServerTimeLoader();
-  return (
-    <>
-      <main>
-        <Header />
-        <section>
-          <Slot />
-        </section>
-      </main>
-      <footer>
-        <a href="https://www.builder.io/" target="_blank">
-          Made with ♡ by Builder.io
-          <div>{serverTime.value.date}</div>
-        </a>
-      </footer>
-    </>
-  );
+	const imageTransformer$ = $((props: ImageTransformerProps): string => {
+		return providers[selectedProvider].transformer(props);
+	});
+
+	// Provide your default options
+	useImageProvider({
+		imageTransformer$,
+	});
+
+	return (
+		<>
+			<main>
+				<Header />
+				<section>
+					<Slot />
+				</section>
+			</main>
+			<footer>
+				<a href='https://www.builder.io/' target='_blank'>
+					Made with ♡ by Builder.ioß
+				</a>
+			</footer>
+		</>
+	);
 });
