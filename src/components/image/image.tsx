@@ -1,13 +1,13 @@
+import type { QRL, QwikIntrinsicElements } from '@builder.io/qwik';
 import {
 	component$,
 	createContextId,
 	useContext,
 	useContextProvider,
 	useId,
-	useTask$,
 	useSignal,
+	useTask$,
 } from '@builder.io/qwik';
-import type { QwikIntrinsicElements, QRL } from '@builder.io/qwik';
 
 export const DEFAULT_RESOLUTIONS = [3840, 1920, 1280, 960, 640];
 
@@ -137,7 +137,8 @@ export const getSrcSet = async ({
 
 	const srcSets = [];
 	for await (const breakpoint of breakpoints.sort()) {
-		let transformedHeight;
+		let transformedHeight =
+			typeof height === 'string' ? parseInt(height, 10) : height;
 		if (height && aspectRatio) {
 			transformedHeight = Math.round(breakpoint * aspectRatio);
 		}
@@ -205,7 +206,7 @@ export const Image = component$<ImageProps>((props) => {
 	const sizes = getSizes(props);
 	const srcSetSignal = useSignal('');
 
-  const { src, width, height, aspectRatio, layout } = props;
+	const { src, width, height, aspectRatio, layout } = props;
 	useTask$(async () => {
 		srcSetSignal.value = await getSrcSet({
 			src,
@@ -225,7 +226,9 @@ export const Image = component$<ImageProps>((props) => {
 			{...imageAttributes}
 			style={style}
 			width={['fullWidth', 'constrained'].includes(layout) ? undefined : width}
-			height={['fullWidth', 'constrained'].includes(layout) ? undefined : height}
+			height={
+				['fullWidth', 'constrained'].includes(layout) ? undefined : height
+			}
 			srcSet={srcSetSignal.value}
 			sizes={sizes}
 		/>
