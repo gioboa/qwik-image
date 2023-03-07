@@ -39,13 +39,13 @@ export interface ImageProps extends ImageAttributes {
 	aspectRatio?: number;
 	layout: 'fixed' | 'constrained' | 'fullWidth';
 	objectFit?:
-		| 'contain'
-		| 'cover'
-		| 'fill'
-		| 'none'
-		| 'scale-down'
-		| 'inherit'
-		| 'initial';
+	| 'contain'
+	| 'cover'
+	| 'fill'
+	| 'none'
+	| 'scale-down'
+	| 'inherit'
+	| 'initial';
 }
 
 export const ImageContext = createContextId<ImageState>('ImageContext');
@@ -84,17 +84,24 @@ export const getStyles = ({
 			return {
 				...baseStyles,
 				width: '100%',
+				height: isValid(aspectRatio) ? 'auto' : undefined,
 				'max-width': isValid(width) ? `${width}px` : undefined,
 				'max-height': isValid(height) ? `${height}px` : undefined,
 				'aspect-ratio': isValid(aspectRatio) ? `${aspectRatio}` : undefined,
 			};
-		case 'fullWidth':
+		case 'fullWidth': {
+    	const heightStyle = {
+		    height: isValid(aspectRatio)
+			    ? 'auto'
+			    : isValid(height) ? `${height}px` : undefined
+	    }
 			return {
 				...baseStyles,
+				...heightStyle,
 				width: '100%',
 				'aspect-ratio': isValid(aspectRatio) ? `${aspectRatio}` : undefined,
-				height: isValid(height) ? `${height}px` : undefined,
 			};
+    }
 	}
 };
 
