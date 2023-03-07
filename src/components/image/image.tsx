@@ -39,13 +39,13 @@ export interface ImageProps extends ImageAttributes {
 	aspectRatio?: number;
 	layout: 'fixed' | 'constrained' | 'fullWidth';
 	objectFit?:
-	| 'contain'
-	| 'cover'
-	| 'fill'
-	| 'none'
-	| 'scale-down'
-	| 'inherit'
-	| 'initial';
+		| 'contain'
+		| 'cover'
+		| 'fill'
+		| 'none'
+		| 'scale-down'
+		| 'inherit'
+		| 'initial';
 }
 
 export const ImageContext = createContextId<ImageState>('ImageContext');
@@ -69,9 +69,16 @@ export const getStyles = ({
 	'dominant' | 'width' | 'height' | 'aspectRatio' | 'objectFit' | 'layout'
 >): Record<string, string | undefined> => {
 	const isValid = (value?: string | number) => value || value === 0;
-	const baseStyles = { 
+	const baseStyles = {
 		'object-fit': objectFit,
 		'background-color': dominant || 'transparent',
+	};
+	const heightStyle = {
+		height: isValid(aspectRatio)
+			? 'auto'
+			: isValid(height)
+			? `${height}px`
+			: undefined,
 	};
 	switch (layout) {
 		case 'fixed':
@@ -83,25 +90,19 @@ export const getStyles = ({
 		case 'constrained':
 			return {
 				...baseStyles,
-				width: '100%',
+				...heightStyle,
 				height: isValid(aspectRatio) ? 'auto' : undefined,
 				'max-width': isValid(width) ? `${width}px` : undefined,
 				'max-height': isValid(height) ? `${height}px` : undefined,
 				'aspect-ratio': isValid(aspectRatio) ? `${aspectRatio}` : undefined,
 			};
-		case 'fullWidth': {
-    	const heightStyle = {
-		    height: isValid(aspectRatio)
-			    ? 'auto'
-			    : isValid(height) ? `${height}px` : undefined
-	    }
+		case 'fullWidth':
 			return {
 				...baseStyles,
 				...heightStyle,
 				width: '100%',
 				'aspect-ratio': isValid(aspectRatio) ? `${aspectRatio}` : undefined,
 			};
-    }
 	}
 };
 
