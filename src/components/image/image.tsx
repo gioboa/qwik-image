@@ -73,13 +73,11 @@ export const getStyles = ({
 		'object-fit': objectFit,
 		'background-color': dominant || 'transparent',
 	};
-	const heightStyle = {
-		height: isValid(aspectRatio)
-			? 'auto'
-			: isValid(height)
-			? `${height}px`
-			: undefined,
-	};
+
+	if (height !== 'auto' && isValid(aspectRatio) && layout !== 'fixed') {
+		console.warn(`To maintain the aspect ratio we set 'height: "auto"'`);
+	}
+
 	switch (layout) {
 		case 'fixed':
 			return {
@@ -90,19 +88,27 @@ export const getStyles = ({
 		case 'constrained':
 			return {
 				...baseStyles,
-				...heightStyle,
+				width: '100%',
 				height: isValid(aspectRatio) ? 'auto' : undefined,
 				'max-width': isValid(width) ? `${width}px` : undefined,
 				'max-height': isValid(height) ? `${height}px` : undefined,
 				'aspect-ratio': isValid(aspectRatio) ? `${aspectRatio}` : undefined,
 			};
-		case 'fullWidth':
+		case 'fullWidth': {
+			const heightStyle = {
+				height: isValid(aspectRatio)
+					? 'auto'
+					: isValid(height)
+					? `${height}px`
+					: undefined,
+			};
 			return {
 				...baseStyles,
 				...heightStyle,
 				width: '100%',
 				'aspect-ratio': isValid(aspectRatio) ? `${aspectRatio}` : undefined,
 			};
+		}
 	}
 };
 
