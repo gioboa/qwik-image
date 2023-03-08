@@ -34,7 +34,7 @@ export type ImageTransformerProps = {
  * @alpha
  */
 export interface ImageProps extends ImageAttributes {
-	dominant?: string;
+	placeholder?: string;
 	style?: Record<string, string | number>;
 	aspectRatio?: number;
 	layout: 'fixed' | 'constrained' | 'fullWidth';
@@ -58,7 +58,7 @@ export const useImageProvider = (state: ImageState) => {
 };
 
 export const getStyles = ({
-	dominant,
+	placeholder,
 	width,
 	height,
 	aspectRatio,
@@ -66,17 +66,22 @@ export const getStyles = ({
 	layout,
 }: Pick<
 	ImageProps,
-	'dominant' | 'width' | 'height' | 'aspectRatio' | 'objectFit' | 'layout'
+	'placeholder' | 'width' | 'height' | 'aspectRatio' | 'objectFit' | 'layout'
 >): Record<string, string | undefined> => {
 	const isValid = (value?: string | number) => value || value === 0;
-	const baseStyles = {
-		'object-fit': objectFit,
-		'background-color': dominant || 'transparent',
-	};
 
-	if (height !== 'auto' && isValid(aspectRatio) && layout !== 'fixed') {
+	if (height === 'auto' && width === 'auto' && isValid(aspectRatio)) {
+		console.warn(`To use the aspect ratio either set the width or the height`);
+	}
+
+	if (height !== 'auto' && layout !== 'fixed' && isValid(aspectRatio)) {
 		console.warn(`To maintain the aspect ratio we set 'height: "auto"'`);
 	}
+
+	const baseStyles = {
+		'object-fit': objectFit,
+		'background-color': placeholder || 'transparent',
+	};
 
 	switch (layout) {
 		case 'fixed':
@@ -120,16 +125,10 @@ export const getSizes = ({
 		return undefined;
 	}
 	switch (layout) {
-		// If screen is wider than the max size, image width is the max size,
-		// otherwise it's the width of the screen
 		case `constrained`:
 			return `(min-width: ${width}px) ${width}px, 100vw`;
-
-		// Image is always the same width, whatever the size of the screen
 		case `fixed`:
 			return `${width}px`;
-
-		// Image is always the width of the screen
 		case `fullWidth`:
 			return `100vw`;
 
@@ -200,13 +199,7 @@ export const getBreakpoints = ({
 		return [width, doubleWidth];
 	}
 	if (layout === 'constrained') {
-		return [
-			// Always include the image at 1x and 2x the specified width
-			width,
-			doubleWidth,
-			// Filter out any resolutions that are larger than the double-res image
-			...resolutions.filter((w) => w < doubleWidth),
-		];
+		return [width, doubleWidth, ...resolutions.filter((w) => w < doubleWidth)];
 	}
 
 	return [];
