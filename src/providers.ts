@@ -1,6 +1,6 @@
 import type { ImageTransformerProps } from './components/image/image';
 
-export const selectedProvider: keyof typeof providers = 'builder.io';
+export const selectedProvider: keyof typeof providers = 'vendure';
 
 export const providers: Record<
 	string,
@@ -15,10 +15,10 @@ export const providers: Record<
 			return `https://cdn.builder.io/api/v1/${src}?height=${height}&width=${width}}&format=webp&fit=fill`;
 		},
 	},
-	cloudflare: {
-		src: 'https://thumbs.dreamstime.com/b/pizza-rustic-italian-mozzarella-cheese-basil-leaves-35669930.jpg',
+	vendure: {
+		src: 'assets/preview/69/nathan-fertig-249917-unsplash__preview.jpg',
 		transformer: ({ src, width, height }) => {
-			return `https://that-test.site/cdn-cgi/image/w=${width},h=${height},q=100,fit=contain/${src}`;
+			return `https://readonlydemo.vendure.io/${src}?w=${width}&h=${height}&format=webp`;
 		},
 	},
 };
