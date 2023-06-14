@@ -4,4 +4,4 @@
 
 </br>
 
-![preview](./docs/preview.png)
+![preview](./docs/preview-image.png)
